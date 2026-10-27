@@ -28,7 +28,8 @@ e todo o som é sintetizado com Web Audio.
 - **Frascos** (3) curam 45 de vida. Ficam abaixo das barras.
 - **Fogão de chão** (no meio da área, antes da porta do boss): chegue perto e aperte Z/Espaço.
   Ele acende, recupera a vida, recarrega os frascos e vira o seu ponto de retorno. Descansar de
-  novo nele faz as almas penadas renascerem.
+  novo nele faz as almas penadas renascerem (o primeiro acendimento não), sempre a pelo menos
+  300 px de você.
 - **Almas penadas** (3): patrulham, perseguem quando o veem e, antes de atacar, os olhos ficam
   vermelhos e o corpo pisca. Aí é hora de esquivar.
 - **Boitatá**: ao passar pela porta em arco, uma barreira de fogo fecha a arena e a barra de vida
@@ -110,7 +111,10 @@ src/
 - **Frasco na tecla C** (não seta para baixo + ação), para não conflitar com o ataque e ser fácil de
   lembrar. Mostrado no título e no HUD.
 - **Interagir x atacar**: perto do fogão (e no chão), Z/Espaço interage em vez de atacar.
-- **Descansar no fogão aceso** recupera tudo e renasce as almas penadas (como no gênero).
+- **Descansar no fogão aceso** recupera tudo e renasce as almas penadas (como no gênero). O primeiro
+  acendimento não as renasce. Cada alma volta no ponto da sua patrulha mais distante do jogador e,
+  se nenhum estiver a ≥ 300 px (`GHOST.safeRespawnDist`), espera invisível até o jogador se afastar.
+  A mesma regra vale no respawn após a morte.
 - **Contato com o boss só causa dano durante a investida e a erupção** (não no ócio nem na janela
   de punição), para o combate ser legível e justo.
 - **Inimigos comuns são espectros que flutuam** sem colisão com o cenário (atravessam as ruínas),
