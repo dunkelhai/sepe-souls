@@ -71,6 +71,7 @@ export const GHOST = {
   hitStun: 260,
   knockback: 160,
   hoverAboveGround: 30,
+  safeRespawnDist: 300, // nenhuma alma renasce mais perto que isso do jogador
   spawns: [
     { x: 900, minX: 700, maxX: 1150 },
     { x: 1560, minX: 1320, maxX: 1800 },

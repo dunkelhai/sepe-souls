@@ -17,6 +17,7 @@ export class Ghost extends Phaser.GameObjects.Sprite {
   private vx = 0;
   private baseY: number;
   private light: Phaser.GameObjects.Image;
+  private pendingRespawn = false;
 
   constructor(
     scene: Phaser.Scene,
@@ -49,7 +50,10 @@ export class Ghost extends Phaser.GameObjects.Sprite {
   }
 
   updateGhost(dt: number, player: Player): void {
-    if (this.mode === 'dead') return;
+    if (this.mode === 'dead') {
+      if (this.pendingRespawn) this.resetAwayFrom(player.x);
+      return;
+    }
     this.t += dt;
     this.life += dt;
     const dx = player.x - this.x;
@@ -144,7 +148,30 @@ export class Ghost extends Phaser.GameObjects.Sprite {
     this.scene.tweens.add({ targets: this.light, alpha: 0, duration: 380 });
   }
 
+  /**
+   * Renasce no ponto de patrulha mais distante de `avoidX`. Se nenhum ponto
+   * estiver a pelo menos `GHOST.safeRespawnDist`, fica invisível e tenta de novo
+   * a cada frame até o jogador se afastar.
+   */
+  resetAwayFrom(avoidX: number): void {
+    const points = [this.spawn.x, this.spawn.minX, this.spawn.maxX];
+    const best = points.reduce((a, b) => (Math.abs(b - avoidX) > Math.abs(a - avoidX) ? b : a));
+    if (Math.abs(best - avoidX) >= GHOST.safeRespawnDist) {
+      this.reset();
+      this.x = best;
+      this.light.setPosition(this.x, this.y - 10);
+      return;
+    }
+    this.scene.tweens.killTweensOf([this, this.light]);
+    this.mode = 'dead';
+    this.pendingRespawn = true;
+    this.clearTint();
+    this.setVisible(false);
+    this.light.setAlpha(0);
+  }
+
   reset(): void {
+    this.pendingRespawn = false;
     this.scene.tweens.killTweensOf([this, this.light]);
     this.hp = GHOST.hp;
     this.mode = 'patrol';

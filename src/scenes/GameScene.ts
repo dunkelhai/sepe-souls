@@ -365,7 +365,8 @@ export class GameScene extends Phaser.Scene implements BossHost {
     this.checkpointLit = true;
     this.player.restoreAll();
     this.player.freeze(500);
-    for (const g of this.ghosts) g.reset();
+    // Só descansar (não o primeiro acendimento) faz as almas renascerem.
+    if (!first) for (const g of this.ghosts) g.resetAwayFrom(this.player.x);
     if (first) {
       sfx.ignite();
       this.flame.setVisible(true).setScale(0.2, 0);
@@ -447,7 +448,7 @@ export class GameScene extends Phaser.Scene implements BossHost {
   }
 
   private resetWorld(): void {
-    for (const g of this.ghosts) g.reset();
+    for (const g of this.ghosts) g.resetAwayFrom(this.player.x);
     this.boss.reset();
     this.bossBarVisible = false;
     this.openArena();
